@@ -22,6 +22,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerNumber, setCustomerNumber] = useState("");
   const [openLetter, setOpenLetter] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -100,6 +101,16 @@ export default function Home() {
                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
               />
             </label>
+            <label className="text-sm">
+              <span className="font-medium text-gray-700">Numéro de client (facultatif)</span>
+              <input
+                type="text"
+                value={customerNumber}
+                onChange={(e) => setCustomerNumber(e.target.value)}
+                placeholder="Indiqué dans votre espace client ou sur vos factures"
+                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
+              />
+            </label>
             <p className="text-xs text-gray-500">
               Ces informations servent uniquement à remplir la lettre. Elles ne sont pas enregistrées.
             </p>
@@ -119,6 +130,7 @@ export default function Home() {
                     periodicity: s.periodicity,
                     customerName: customerName.trim() || "[Votre nom et prénom]",
                     customerAddress: customerAddress.trim() || "[Votre adresse]",
+                    customerNumber: customerNumber.trim() || undefined,
                   });
 
                   return (
