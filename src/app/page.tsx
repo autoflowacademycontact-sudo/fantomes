@@ -21,6 +21,9 @@ const DISPLAY_NAMES: Record<string, string> = {
 // Abonnements qui ne se résilient pas par lettre : on les affiche à part
 const TRANSPORT_LABELS = ["SPL"];
 
+// Couleurs des pastilles d'abonnement
+const AVATAR_COLORS = ["bg-rose-500", "bg-amber-500", "bg-sky-500", "bg-violet-500", "bg-teal-500"];
+
 type Summary = { count: number; total: number };
 
 type AnalyzeResponse = {
@@ -141,170 +144,261 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="font-serif text-4xl font-bold text-blue-800">Fantômes</h1>
-      <p className="mt-2 text-gray-600">
-        Débusquez les abonnements que vous payez sans les utiliser.
-      </p>
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      {/* En-tête */}
+      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-700 text-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+          <span className="font-serif text-xl font-bold">Fantômes</span>
+          <span className="text-xs text-blue-100">par AutoFlow Academy</span>
+        </div>
+      </header>
 
-      <section className="mt-8 rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold">1. Importez votre relevé CSV</h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Le fichier est envoyé à notre serveur pour être analysé, puis n&apos;est ni enregistré ni conservé.
+      {/* Accroche */}
+      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-700 px-4 pb-24 pt-12 text-center text-white">
+        <h1 className="mx-auto max-w-3xl font-serif text-4xl font-bold leading-tight sm:text-5xl">
+          Débusquez les abonnements que vous payez sans les utiliser
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-blue-100">
+          Importez votre relevé bancaire : en quelques secondes, vous voyez combien vos abonnements oubliés vous
+          coûtent chaque année.
         </p>
-        <input type="file" accept=".csv" onChange={handleFile} className="mt-4 block text-sm" />
-        {loading && <p className="mt-4 text-sm text-gray-500">Analyse en cours…</p>}
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        <a
+          href="#analyse"
+          className="mt-8 inline-block rounded-full bg-white px-6 py-3 font-semibold text-blue-800 shadow-lg hover:bg-blue-50"
+        >
+          Analyser mon relevé
+        </a>
       </section>
 
-      {summary && (
-        <section className="mt-8 rounded-xl border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold">2. Abonnements détectés</h2>
-
-          <div className="mt-4 grid gap-3 rounded-lg bg-gray-50 p-4">
-            <label className="text-sm">
-              <span className="font-medium text-gray-700">Votre nom et prénom</span>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Prénom Nom"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-sm">
-              <span className="font-medium text-gray-700">Votre adresse</span>
-              <input
-                type="text"
-                value={customerAddress}
-                onChange={(e) => setCustomerAddress(e.target.value)}
-                placeholder="Numéro, rue, code postal, ville"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
-              />
-              {customerAddress.trim() && !addressLooksComplete(customerAddress) && (
-                <span className="mt-1 block text-xs text-amber-700">
-                  Ajoutez le code postal et la ville (ex. 69008 Lyon) pour une lettre complète.
-                </span>
-              )}
-            </label>
-            <label className="text-sm">
-              <span className="font-medium text-gray-700">Numéro de client (facultatif)</span>
-              <input
-                type="text"
-                value={customerNumber}
-                onChange={(e) => setCustomerNumber(e.target.value)}
-                placeholder="Indiqué dans votre espace client ou sur vos factures"
-                className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
-              />
-            </label>
-            <p className="text-xs text-gray-500">
-              Ces informations servent uniquement à remplir la lettre. Elles ne sont pas enregistrées.
-            </p>
-          </div>
-
-          {summary.count === 0 ? (
-            <p className="mt-4 text-gray-600">Aucun abonnement à résilier détecté sur cette période.</p>
-          ) : !unlocked ? (
-            <div className="mt-4 rounded-lg bg-green-50 p-4">
-              <p className="text-lg">
-                <span className="font-bold">{summary.count}</span> abonnement(s) à résilier détecté(s) :
-                environ <span className="font-bold text-green-700">{summary.total.toFixed(2)} € par an</span>.
-              </p>
-              <p className="mt-2 text-sm text-gray-600">
-                Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse complète.
-              </p>
-              <button
-                onClick={startCheckout}
-                disabled={paying}
-                className="mt-4 rounded-lg bg-blue-800 px-4 py-2 text-sm text-white disabled:opacity-50"
+      {/* Comment ça marche */}
+      <section className="-mt-14 px-4">
+        <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+          {[
+            { n: "1", t: "Importez votre relevé", d: "Un fichier CSV de votre banque. Il est analysé puis effacé, jamais conservé." },
+            { n: "2", t: "Voyez le total", d: "Le nombre d'abonnements et leur coût annuel cumulé, gratuitement." },
+            { n: "3", t: "Résiliez en un clic", d: "Débloquez le détail et générez une lettre de résiliation prête à envoyer." },
+          ].map((step, i) => (
+            <div key={step.n} className="rounded-2xl bg-white p-6 shadow-md">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full font-bold text-white ${
+                  ["bg-blue-600", "bg-emerald-500", "bg-amber-500"][i]
+                }`}
               >
-                {paying ? "Redirection…" : "Voir le détail — 19 €"}
-              </button>
+                {step.n}
+              </div>
+              <h2 className="mt-4 font-semibold text-slate-900">{step.t}</h2>
+              <p className="mt-1 text-sm text-slate-600">{step.d}</p>
             </div>
-          ) : (
-            <>
-              <ul className="mt-4 divide-y divide-gray-100">
-                {cancellable.map((s) => {
-                  const name = DISPLAY_NAMES[s.label] ?? s.label;
-                  const isOpen = openLetter === s.label;
-                  const letter = buildCancellationLetter({
-                    provider: name,
-                    amount: s.averageAmount,
-                    periodicity: s.periodicity,
-                    customerName: customerName.trim() || "[Votre nom et prénom]",
-                    customerAddress: customerAddress.trim() || "[Votre adresse]",
-                    customerNumber: customerNumber.trim() || undefined,
-                  });
+          ))}
+        </div>
+      </section>
 
-                  return (
-                    <li key={s.label} className="py-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">{name}</p>
-                          <p className="text-sm text-gray-500">
-                            {s.averageAmount.toFixed(2)} € par {s.periodicity === "mensuel" ? "mois" : "an"}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <p className="font-semibold text-green-700">{s.annualCost.toFixed(2)} € / an</p>
-                          <button
-                            onClick={() => setOpenLetter(isOpen ? null : s.label)}
-                            className="rounded-lg border border-gray-300 px-3 py-1 text-sm hover:bg-gray-50"
-                          >
-                            {isOpen ? "Fermer" : "Générer la lettre"}
-                          </button>
-                        </div>
-                      </div>
+      {/* Analyse */}
+      <section id="analyse" className="mx-auto max-w-3xl space-y-8 px-4 py-12">
+        {/* Étape 1 : import */}
+        <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
+          <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+              1
+            </span>
+            Importez votre relevé CSV
+          </h2>
+          <p className="mt-2 text-sm text-slate-600">
+            Le fichier est envoyé à notre serveur pour être analysé, puis n&apos;est ni enregistré ni conservé.
+          </p>
 
-                      {isOpen && (
-                        <div className="mt-4">
-                          <textarea
-                            readOnly
-                            value={letter}
-                            rows={14}
-                            className="w-full rounded-lg border border-gray-200 p-3 font-mono text-sm"
-                          />
-                          <button
-                            onClick={() => copyLetter(letter)}
-                            className="mt-2 rounded-lg bg-blue-800 px-4 py-2 text-sm text-white"
-                          >
-                            {copied ? "Copié !" : "Copier la lettre"}
-                          </button>
-                          <p className="mt-2 text-xs text-gray-500">
-                            Beaucoup de services proposent désormais la résiliation directement dans leur espace
-                            client : vérifiez-le avant d&apos;envoyer une lettre.
-                          </p>
-                        </div>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-              <p className="mt-6 border-t border-gray-100 pt-4 text-right text-lg">
-                Total à résilier : <span className="font-bold text-green-700">{summary.total.toFixed(2)} € / an</span>
+          <label className="mt-6 block cursor-pointer rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-8 text-center transition hover:border-blue-500 hover:bg-blue-100">
+            <span className="block text-base font-semibold text-blue-800">Choisir mon fichier CSV</span>
+            <span className="mt-1 block text-sm text-slate-500">Cliquez ici pour sélectionner votre relevé</span>
+            <input type="file" accept=".csv" onChange={handleFile} className="sr-only" />
+          </label>
+
+          {loading && <p className="mt-4 text-sm font-medium text-blue-700">Analyse en cours…</p>}
+          {error && (
+            <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>
+          )}
+        </div>
+
+        {/* Étape 2 : résultats */}
+        {summary && (
+          <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
+            <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">
+                2
+              </span>
+              Vos abonnements
+            </h2>
+
+            {/* Coordonnées pour la lettre */}
+            <div className="mt-6 grid gap-4 rounded-xl bg-slate-50 p-5">
+              <p className="text-sm font-medium text-slate-700">
+                Pour générer les lettres, indiquez vos coordonnées (non enregistrées) :
               </p>
-            </>
-          )}
-
-          {unlocked && transport.length > 0 && (
-            <div className="mt-6 rounded-lg bg-gray-50 p-4">
-              <p className="text-sm font-semibold text-gray-700">À garder (transport)</p>
-              {transport.map((s) => (
-                <p key={s.label} className="mt-1 text-sm text-gray-600">
-                  {DISPLAY_NAMES[s.label] ?? s.label} : {s.averageAmount.toFixed(2)} € par mois.
-                  La résiliation se fait auprès du transporteur, pas par lettre.
-                </p>
-              ))}
+              <label className="text-sm">
+                <span className="font-medium text-slate-700">Votre nom et prénom</span>
+                <input
+                  type="text"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Prénom Nom"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                />
+              </label>
+              <label className="text-sm">
+                <span className="font-medium text-slate-700">Votre adresse</span>
+                <input
+                  type="text"
+                  value={customerAddress}
+                  onChange={(e) => setCustomerAddress(e.target.value)}
+                  placeholder="Numéro, rue, code postal, ville"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                />
+                {customerAddress.trim() && !addressLooksComplete(customerAddress) && (
+                  <span className="mt-1 block text-xs text-amber-700">
+                    Ajoutez le code postal et la ville (ex. 69008 Lyon) pour une lettre complète.
+                  </span>
+                )}
+              </label>
+              <label className="text-sm">
+                <span className="font-medium text-slate-700">Numéro de client (facultatif)</span>
+                <input
+                  type="text"
+                  value={customerNumber}
+                  onChange={(e) => setCustomerNumber(e.target.value)}
+                  placeholder="Indiqué dans votre espace client ou sur vos factures"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                />
+              </label>
             </div>
-          )}
-        </section>
-      )}
 
-      <footer className="mt-12 flex flex-wrap justify-center gap-4 border-t border-gray-100 pt-6 text-sm text-gray-500">
-        <Link href="/mentions-legales" className="hover:underline">Mentions légales</Link>
-        <Link href="/cgv" className="hover:underline">CGV</Link>
-        <Link href="/confidentialite" className="hover:underline">Confidentialité</Link>
+            {summary.count === 0 ? (
+              <p className="mt-6 rounded-xl bg-emerald-50 p-5 text-emerald-800">
+                Aucun abonnement à résilier détecté sur cette période.
+              </p>
+            ) : !unlocked ? (
+              <div className="mt-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg">
+                <p className="text-lg">
+                  <span className="text-2xl font-bold">{summary.count}</span> abonnement(s) à résilier détecté(s)
+                </p>
+                <p className="mt-2 text-3xl font-bold">
+                  {summary.total.toFixed(2)} € <span className="text-lg font-medium">par an</span>
+                </p>
+                <p className="mt-3 text-sm text-emerald-50">
+                  Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse
+                  complète.
+                </p>
+                <button
+                  onClick={startCheckout}
+                  disabled={paying}
+                  className="mt-5 rounded-full bg-white px-6 py-3 font-semibold text-emerald-700 shadow hover:bg-emerald-50 disabled:opacity-60"
+                >
+                  {paying ? "Redirection…" : "Voir le détail — 19 €"}
+                </button>
+              </div>
+            ) : (
+              <>
+                <ul className="mt-6 space-y-3">
+                  {cancellable.map((s, index) => {
+                    const name = DISPLAY_NAMES[s.label] ?? s.label;
+                    const isOpen = openLetter === s.label;
+                    const letter = buildCancellationLetter({
+                      provider: name,
+                      amount: s.averageAmount,
+                      periodicity: s.periodicity,
+                      customerName: customerName.trim() || "[Votre nom et prénom]",
+                      customerAddress: customerAddress.trim() || "[Votre adresse]",
+                      customerNumber: customerNumber.trim() || undefined,
+                    });
+
+                    return (
+                      <li key={s.label} className="rounded-xl border border-slate-200 p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <span
+                              className={`flex h-10 w-10 items-center justify-center rounded-full font-bold text-white ${
+                                AVATAR_COLORS[index % AVATAR_COLORS.length]
+                              }`}
+                            >
+                              {name.charAt(0).toUpperCase()}
+                            </span>
+                            <div>
+                              <p className="font-semibold text-slate-900">{name}</p>
+                              <p className="text-sm text-slate-500">
+                                {s.averageAmount.toFixed(2)} € par {s.periodicity === "mensuel" ? "mois" : "an"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                              {s.annualCost.toFixed(2)} € / an
+                            </span>
+                            <button
+                              onClick={() => setOpenLetter(isOpen ? null : s.label)}
+                              className="rounded-full border border-blue-300 px-4 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-50"
+                            >
+                              {isOpen ? "Fermer" : "Générer la lettre"}
+                            </button>
+                          </div>
+                        </div>
+
+                        {isOpen && (
+                          <div className="mt-4">
+                            <textarea
+                              readOnly
+                              value={letter}
+                              rows={14}
+                              className="w-full rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-sm"
+                            />
+                            <button
+                              onClick={() => copyLetter(letter)}
+                              className="mt-2 rounded-full bg-blue-700 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+                            >
+                              {copied ? "Copié !" : "Copier la lettre"}
+                            </button>
+                            <p className="mt-2 text-xs text-slate-500">
+                              Beaucoup de services proposent désormais la résiliation directement dans leur espace
+                              client : vérifiez-le avant d&apos;envoyer une lettre.
+                            </p>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white">
+                  <span className="font-medium">Total à résilier</span>
+                  <span className="text-2xl font-bold">{summary.total.toFixed(2)} € / an</span>
+                </div>
+              </>
+            )}
+
+            {unlocked && transport.length > 0 && (
+              <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm font-semibold text-amber-800">À garder (transport)</p>
+                {transport.map((s) => (
+                  <p key={s.label} className="mt-1 text-sm text-amber-900">
+                    {DISPLAY_NAMES[s.label] ?? s.label} : {s.averageAmount.toFixed(2)} € par mois. La résiliation se
+                    fait auprès du transporteur, pas par lettre.
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* Pied de page */}
+      <footer className="bg-slate-900 px-4 py-8 text-sm text-slate-300">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <p>© 2026 AutoFlow Academy · Fantômes</p>
+          <nav className="flex gap-5">
+            <Link href="/mentions-legales" className="hover:text-white">Mentions légales</Link>
+            <Link href="/cgv" className="hover:text-white">CGV</Link>
+            <Link href="/confidentialite" className="hover:text-white">Confidentialité</Link>
+          </nav>
+        </div>
       </footer>
-    </main>
+    </div>
   );
 }
