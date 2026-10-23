@@ -22,7 +22,7 @@ const DISPLAY_NAMES: Record<string, string> = {
 const TRANSPORT_LABELS = ["SPL"];
 
 // Couleurs des pastilles d'abonnement
-const AVATAR_COLORS = ["bg-rose-500", "bg-amber-500", "bg-sky-500", "bg-violet-500", "bg-teal-500"];
+const AVATAR_COLORS = ["bg-violet-600", "bg-cyan-600", "bg-fuchsia-600", "bg-indigo-600", "bg-teal-600"];
 
 type Summary = { count: number; total: number };
 
@@ -146,25 +146,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       {/* En-tête */}
-      <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-700 text-white">
+      <header className="bg-gradient-to-r from-slate-950 via-indigo-950 to-violet-900 text-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <span className="font-serif text-xl font-bold">Fantômes</span>
-          <span className="text-xs text-blue-100">par AutoFlow Academy</span>
+          <span className="text-xs text-violet-200">par AutoFlow Academy</span>
         </div>
       </header>
 
       {/* Accroche */}
-      <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-700 px-4 pb-24 pt-12 text-center text-white">
+      <section className="bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-900 px-4 pb-24 pt-12 text-center text-white">
         <h1 className="mx-auto max-w-3xl font-serif text-4xl font-bold leading-tight sm:text-5xl">
           Débusquez les abonnements que vous payez sans les utiliser
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-lg text-blue-100">
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-violet-200">
           Importez votre relevé bancaire : en quelques secondes, vous voyez combien vos abonnements oubliés vous
           coûtent chaque année.
         </p>
         <a
           href="#analyse"
-          className="mt-8 inline-block rounded-full bg-white px-6 py-3 font-semibold text-blue-800 shadow-lg hover:bg-blue-50"
+          className="mt-8 inline-block rounded-full bg-cyan-300 px-6 py-3 font-semibold text-indigo-950 shadow-[0_0_30px_rgba(103,232,249,0.45)] hover:bg-cyan-200"
         >
           Analyser mon relevé
         </a>
@@ -181,7 +181,7 @@ export default function Home() {
             <div key={step.n} className="rounded-2xl bg-white p-6 shadow-md">
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full font-bold text-white ${
-                  ["bg-blue-600", "bg-emerald-500", "bg-amber-500"][i]
+                  ["bg-violet-600", "bg-cyan-600", "bg-fuchsia-600"][i]
                 }`}
               >
                 {step.n}
@@ -198,7 +198,7 @@ export default function Home() {
         {/* Étape 1 : import */}
         <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
           <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-sm font-bold text-white">
               1
             </span>
             Importez votre relevé CSV
@@ -207,13 +207,13 @@ export default function Home() {
             Le fichier est envoyé à notre serveur pour être analysé, puis n&apos;est ni enregistré ni conservé.
           </p>
 
-          <label className="mt-6 block cursor-pointer rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-8 text-center transition hover:border-blue-500 hover:bg-blue-100">
-            <span className="block text-base font-semibold text-blue-800">Choisir mon fichier CSV</span>
+          <label className="mt-6 block cursor-pointer rounded-xl border-2 border-dashed border-violet-300 bg-violet-50 p-8 text-center transition hover:border-violet-500 hover:bg-violet-100">
+            <span className="block text-base font-semibold text-violet-800">Choisir mon fichier CSV</span>
             <span className="mt-1 block text-sm text-slate-500">Cliquez ici pour sélectionner votre relevé</span>
             <input type="file" accept=".csv" onChange={handleFile} className="sr-only" />
           </label>
 
-          {loading && <p className="mt-4 text-sm font-medium text-blue-700">Analyse en cours…</p>}
+          {loading && <p className="mt-4 text-sm font-medium text-violet-700">Analyse en cours…</p>}
           {error && (
             <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</p>
           )}
@@ -223,7 +223,7 @@ export default function Home() {
         {summary && (
           <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
             <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-900">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-600 text-sm font-bold text-white">
                 2
               </span>
               Vos abonnements
@@ -241,7 +241,7 @@ export default function Home() {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Prénom Nom"
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-violet-500 focus:outline-none"
                 />
               </label>
               <label className="text-sm">
@@ -251,7 +251,7 @@ export default function Home() {
                   value={customerAddress}
                   onChange={(e) => setCustomerAddress(e.target.value)}
                   placeholder="Numéro, rue, code postal, ville"
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-violet-500 focus:outline-none"
                 />
                 {customerAddress.trim() && !addressLooksComplete(customerAddress) && (
                   <span className="mt-1 block text-xs text-amber-700">
@@ -266,31 +266,31 @@ export default function Home() {
                   value={customerNumber}
                   onChange={(e) => setCustomerNumber(e.target.value)}
                   placeholder="Indiqué dans votre espace client ou sur vos factures"
-                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                  className="mt-1 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 focus:border-violet-500 focus:outline-none"
                 />
               </label>
             </div>
 
             {summary.count === 0 ? (
-              <p className="mt-6 rounded-xl bg-emerald-50 p-5 text-emerald-800">
+              <p className="mt-6 rounded-xl bg-violet-50 p-5 text-violet-800">
                 Aucun abonnement à résilier détecté sur cette période.
               </p>
             ) : !unlocked ? (
-              <div className="mt-6 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-white shadow-lg">
+              <div className="mt-6 rounded-2xl bg-gradient-to-br from-violet-700 to-fuchsia-700 p-6 text-white shadow-lg">
                 <p className="text-lg">
                   <span className="text-2xl font-bold">{summary.count}</span> abonnement(s) à résilier détecté(s)
                 </p>
                 <p className="mt-2 text-3xl font-bold">
                   {summary.total.toFixed(2)} € <span className="text-lg font-medium">par an</span>
                 </p>
-                <p className="mt-3 text-sm text-emerald-50">
+                <p className="mt-3 text-sm text-violet-100">
                   Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse
                   complète.
                 </p>
                 <button
                   onClick={startCheckout}
                   disabled={paying}
-                  className="mt-5 rounded-full bg-white px-6 py-3 font-semibold text-emerald-700 shadow hover:bg-emerald-50 disabled:opacity-60"
+                  className="mt-5 rounded-full bg-white px-6 py-3 font-semibold text-violet-800 shadow hover:bg-violet-50 disabled:opacity-60"
                 >
                   {paying ? "Redirection…" : "Voir le détail — 19 €"}
                 </button>
@@ -329,12 +329,12 @@ export default function Home() {
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                            <span className="rounded-full bg-cyan-100 px-3 py-1 text-sm font-semibold text-cyan-800">
                               {s.annualCost.toFixed(2)} € / an
                             </span>
                             <button
                               onClick={() => setOpenLetter(isOpen ? null : s.label)}
-                              className="rounded-full border border-blue-300 px-4 py-1.5 text-sm font-medium text-blue-700 hover:bg-blue-50"
+                              className="rounded-full border border-violet-300 px-4 py-1.5 text-sm font-medium text-violet-700 hover:bg-violet-50"
                             >
                               {isOpen ? "Fermer" : "Générer la lettre"}
                             </button>
@@ -351,7 +351,7 @@ export default function Home() {
                             />
                             <button
                               onClick={() => copyLetter(letter)}
-                              className="mt-2 rounded-full bg-blue-700 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-800"
+                              className="mt-2 rounded-full bg-violet-700 px-5 py-2 text-sm font-semibold text-white hover:bg-violet-800"
                             >
                               {copied ? "Copié !" : "Copier la lettre"}
                             </button>
@@ -366,7 +366,7 @@ export default function Home() {
                   })}
                 </ul>
 
-                <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 p-5 text-white">
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-gradient-to-r from-violet-700 to-fuchsia-700 p-5 text-white">
                   <span className="font-medium">Total à résilier</span>
                   <span className="text-2xl font-bold">{summary.total.toFixed(2)} € / an</span>
                 </div>
