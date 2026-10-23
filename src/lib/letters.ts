@@ -8,14 +8,34 @@ export type LetterInput = {
   today?: Date;
 };
 
+// Petits mots qui restent en minuscules au milieu d'une adresse ou d'un nom
+const LOWERCASE_WORDS = new Set(["de", "des", "du", "d'", "la", "le", "les", "et", "en", "sur", "sous"]);
+
+// Met en forme un nom ou une adresse saisis à la main : espaces nettoyés,
+// majuscule au début de chaque mot. Ne corrige pas l'orthographe.
+export function formatFreeText(value: string): string {
+  const words = value.trim().replace(/\s+/g, " ").split(" ");
+  return words
+    .map((word, index) => {
+      if (index > 0 && LOWERCASE_WORDS.has(word.toLowerCase())) return word.toLowerCase();
+      return word
+        .split(/([-'’])/)
+        .map((part) => (/^[-'’]$/.test(part) ? part : part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()))
+        .join("");
+    })
+    .join(" ");
+}
+
 export function buildCancellationLetter(input: LetterInput): string {
   const date = (input.today ?? new Date()).toLocaleDateString("fr-FR");
   const amount = input.amount.toFixed(2).replace(".", ",");
   const frequency = input.periodicity === "mensuel" ? "par mois" : "par an";
   const customerLine = input.customerNumber ? `\nNuméro de client : ${input.customerNumber}` : "";
+  const name = formatFreeText(input.customerName);
+  const address = formatFreeText(input.customerAddress);
 
-  return `${input.customerName}
-${input.customerAddress}
+  return `${name}
+${address}
 
 Service client
 ${input.provider}
@@ -34,5 +54,5 @@ Merci de me confirmer par écrit la date de fin de mon abonnement.
 
 Cordialement,
 
-${input.customerName}`;
+${name}`;
 }
