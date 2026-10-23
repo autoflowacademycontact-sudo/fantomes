@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import type { Subscription } from "@/lib/detect";
@@ -297,6 +299,12 @@ export default function Home() {
           )}
         </section>
       )}
+
+      <footer className="mt-12 flex flex-wrap justify-center gap-4 border-t border-gray-100 pt-6 text-sm text-gray-500">
+        <Link href="/mentions-legales" className="hover:underline">Mentions légales</Link>
+        <Link href="/cgv" className="hover:underline">CGV</Link>
+        <Link href="/confidentialite" className="hover:underline">Confidentialité</Link>
+      </footer>
     </main>
   );
 }
