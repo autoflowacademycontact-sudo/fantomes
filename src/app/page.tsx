@@ -176,7 +176,7 @@ export default function Home() {
           {[
             { n: "1", t: "Importez votre relevé", d: "Un fichier CSV de votre banque. Il est analysé puis effacé, jamais conservé." },
             { n: "2", t: "Voyez le total", d: "Le nombre d'abonnements et leur coût annuel cumulé, gratuitement." },
-            { n: "3", t: "Résiliez en un clic", d: "Débloquez le détail et générez une lettre de résiliation prête à envoyer." },
+            { n: "3", t: "Préparez vos résiliations", d: "Débloquez le détail et générez une lettre de résiliation prête à envoyer." },
           ].map((step, i) => (
             <div key={step.n} className="rounded-2xl bg-white p-6 shadow-md">
               <div
