@@ -5,6 +5,10 @@ import type { ChangeEvent } from "react";
 import { parseCsv, detectSubscriptions, type Subscription } from "@/lib/detect";
 import { addressLooksComplete, buildCancellationLetter } from "@/lib/letters";
 
+// Passera à true quand le paiement Stripe sera branché et vérifié côté serveur.
+// Tant que c'est false, seul le total est affiché.
+const DETAILS_UNLOCKED = false;
+
 // Noms affichés pour les libellés détectés (clé = libellé normalisé en majuscules)
 const DISPLAY_NAMES: Record<string, string> = {
   PROTONVPN: "ProtonVPN",
@@ -123,6 +127,22 @@ export default function Home() {
 
           {cancellable.length === 0 ? (
             <p className="mt-4 text-gray-600">Aucun abonnement à résilier détecté sur cette période.</p>
+          ) : !DETAILS_UNLOCKED ? (
+            <div className="mt-4 rounded-lg bg-green-50 p-4">
+              <p className="text-lg">
+                <span className="font-bold">{cancellable.length}</span> abonnement(s) à résilier détecté(s) :
+                environ <span className="font-bold text-green-700">{total.toFixed(2)} € par an</span>.
+              </p>
+              <p className="mt-2 text-sm text-gray-600">
+                Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse complète.
+              </p>
+              <button
+                disabled
+                className="mt-4 cursor-not-allowed rounded-lg bg-blue-800 px-4 py-2 text-sm text-white opacity-50"
+              >
+                Voir le détail — 19 € (bientôt disponible)
+              </button>
+            </div>
           ) : (
             <>
               <ul className="mt-4 divide-y divide-gray-100">
