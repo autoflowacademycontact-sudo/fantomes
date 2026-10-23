@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import { parseCsv, detectSubscriptions, type Subscription } from "@/lib/detect";
 import { addressLooksComplete, buildCancellationLetter } from "@/lib/letters";
 
-// Passera à true quand le paiement Stripe sera branché et vérifié côté serveur.
-// Tant que c'est false, seul le total est affiché.
-const DETAILS_UNLOCKED = false;
+// Identifiant de la session de paiement, gardé dans ce navigateur uniquement
+const PAYMENT_STORAGE_KEY = "fantomes_session_id";
 
 // Noms affichés pour les libellés détectés (clé = libellé normalisé en majuscules)
 const DISPLAY_NAMES: Record<string, string> = {
@@ -29,6 +28,40 @@ export default function Home() {
   const [customerNumber, setCustomerNumber] = useState("");
   const [openLetter, setOpenLetter] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
+  const [paying, setPaying] = useState(false);
+
+  // Au chargement : si on revient de Stripe, on mémorise la session puis on vérifie qu'elle est payée
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const fromStripe = url.searchParams.get("session_id");
+    if (fromStripe) {
+      localStorage.setItem(PAYMENT_STORAGE_KEY, fromStripe);
+      window.history.replaceState({}, "", url.pathname);
+    }
+
+    const sessionId = localStorage.getItem(PAYMENT_STORAGE_KEY);
+    if (!sessionId) return;
+
+    fetch(`/api/verify?session_id=${encodeURIComponent(sessionId)}`)
+      .then((r) => r.json())
+      .then((data: { paid: boolean }) => setUnlocked(Boolean(data.paid)))
+      .catch(() => setUnlocked(false));
+  }, []);
+
+  async function startCheckout() {
+    setPaying(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) throw new Error(data.error ?? "Paiement indisponible.");
+      window.location.href = data.url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Paiement indisponible.");
+      setPaying(false);
+    }
+  }
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -127,7 +160,7 @@ export default function Home() {
 
           {cancellable.length === 0 ? (
             <p className="mt-4 text-gray-600">Aucun abonnement à résilier détecté sur cette période.</p>
-          ) : !DETAILS_UNLOCKED ? (
+          ) : !unlocked ? (
             <div className="mt-4 rounded-lg bg-green-50 p-4">
               <p className="text-lg">
                 <span className="font-bold">{cancellable.length}</span> abonnement(s) à résilier détecté(s) :
@@ -137,10 +170,11 @@ export default function Home() {
                 Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse complète.
               </p>
               <button
-                disabled
-                className="mt-4 cursor-not-allowed rounded-lg bg-blue-800 px-4 py-2 text-sm text-white opacity-50"
+                onClick={startCheckout}
+                disabled={paying}
+                className="mt-4 rounded-lg bg-blue-800 px-4 py-2 text-sm text-white disabled:opacity-50"
               >
-                Voir le détail — 19 € (bientôt disponible)
+                {paying ? "Redirection…" : "Voir le détail — 19 €"}
               </button>
             </div>
           ) : (
