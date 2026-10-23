@@ -26,6 +26,11 @@ export function formatFreeText(value: string): string {
     .join(" ");
 }
 
+// Vrai si l'adresse contient un code postal suivi d'une ville
+export function addressLooksComplete(address: string): boolean {
+  return /\b\d{5}\s+\S+/.test(address.trim());
+}
+
 export function buildCancellationLetter(input: LetterInput): string {
   const date = (input.today ?? new Date()).toLocaleDateString("fr-FR");
   const amount = input.amount.toFixed(2).replace(".", ",");

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { ChangeEvent } from "react";
 import { parseCsv, detectSubscriptions, type Subscription } from "@/lib/detect";
-import { buildCancellationLetter } from "@/lib/letters";
+import { addressLooksComplete, buildCancellationLetter } from "@/lib/letters";
 
 // Noms affichés pour les libellés détectés (clé = libellé normalisé en majuscules)
 const DISPLAY_NAMES: Record<string, string> = {
@@ -100,6 +100,11 @@ export default function Home() {
                 placeholder="Numéro, rue, code postal, ville"
                 className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2"
               />
+              {customerAddress.trim() && !addressLooksComplete(customerAddress) && (
+                <span className="mt-1 block text-xs text-amber-700">
+                  Ajoutez le code postal et la ville (ex. 69008 Lyon) pour une lettre complète.
+                </span>
+              )}
             </label>
             <label className="text-sm">
               <span className="font-medium text-gray-700">Numéro de client (facultatif)</span>
