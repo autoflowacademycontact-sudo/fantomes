@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import { parseCsv, detectSubscriptions, type Subscription } from "@/lib/detect";
+import type { Subscription } from "@/lib/detect";
 import { addressLooksComplete, buildCancellationLetter } from "@/lib/letters";
 
 // Identifiant de la session de paiement, gardé dans ce navigateur uniquement
@@ -19,8 +19,20 @@ const DISPLAY_NAMES: Record<string, string> = {
 // Abonnements qui ne se résilient pas par lettre : on les affiche à part
 const TRANSPORT_LABELS = ["SPL"];
 
+type Summary = { count: number; total: number };
+
+type AnalyzeResponse = {
+  paid: boolean;
+  count: number;
+  total: number;
+  subscriptions?: Subscription[]; // présent seulement si le paiement est vérifié
+  error?: string;
+};
+
 export default function Home() {
-  const [subscriptions, setSubscriptions] = useState<Subscription[] | null>(null);
+  const [summary, setSummary] = useState<Summary | null>(null);
+  // Détail des abonnements : rempli seulement après paiement vérifié par le serveur
+  const [details, setDetails] = useState<Subscription[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState("");
@@ -28,25 +40,24 @@ export default function Home() {
   const [customerNumber, setCustomerNumber] = useState("");
   const [openLetter, setOpenLetter] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
   const [paying, setPaying] = useState(false);
 
-  // Au chargement : si on revient de Stripe, on mémorise la session puis on vérifie qu'elle est payée
+  const unlocked = details !== null;
+  const transport = details?.filter((s) => TRANSPORT_LABELS.includes(s.label)) ?? [];
+  const cancellable = details?.filter((s) => !TRANSPORT_LABELS.includes(s.label)) ?? [];
+
+  // Au retour de Stripe, on mémorise la session (le serveur vérifiera le paiement)
   useEffect(() => {
     const url = new URL(window.location.href);
     const fromStripe = url.searchParams.get("session_id");
     if (fromStripe) {
-      localStorage.setItem(PAYMENT_STORAGE_KEY, fromStripe);
+      try {
+        localStorage.setItem(PAYMENT_STORAGE_KEY, fromStripe);
+      } catch {
+        // stockage indisponible : le détail restera masqué
+      }
       window.history.replaceState({}, "", url.pathname);
     }
-
-    const sessionId = localStorage.getItem(PAYMENT_STORAGE_KEY);
-    if (!sessionId) return;
-
-    fetch(`/api/verify?session_id=${encodeURIComponent(sessionId)}`)
-      .then((r) => r.json())
-      .then((data: { paid: boolean }) => setUnlocked(Boolean(data.paid)))
-      .catch(() => setUnlocked(false));
   }, []);
 
   async function startCheckout() {
@@ -69,13 +80,29 @@ export default function Home() {
 
     setError(null);
     setOpenLetter(null);
+    setSummary(null);
+    setDetails(null);
     setLoading(true);
     try {
-      const text = await file.text();
-      const transactions = parseCsv(text);
-      setSubscriptions(detectSubscriptions(transactions));
+      const csv = await file.text();
+      let sessionId = "";
+      try {
+        sessionId = localStorage.getItem(PAYMENT_STORAGE_KEY) ?? "";
+      } catch {
+        sessionId = "";
+      }
+
+      const res = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csv, sessionId }),
+      });
+      const data = (await res.json()) as AnalyzeResponse;
+      if (!res.ok) throw new Error(data.error ?? "Analyse impossible.");
+
+      setSummary({ count: data.count, total: data.total });
+      setDetails(data.paid ? (data.subscriptions ?? []) : null);
     } catch (e) {
-      setSubscriptions(null);
       setError(e instanceof Error ? e.message : "Impossible de lire ce fichier.");
     } finally {
       setLoading(false);
@@ -92,10 +119,6 @@ export default function Home() {
     }
   }
 
-  const transport = subscriptions?.filter((s) => TRANSPORT_LABELS.includes(s.label)) ?? [];
-  const cancellable = subscriptions?.filter((s) => !TRANSPORT_LABELS.includes(s.label)) ?? [];
-  const total = cancellable.reduce((sum, s) => sum + s.annualCost, 0);
-
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
       <h1 className="font-serif text-4xl font-bold text-blue-800">Fantômes</h1>
@@ -106,14 +129,14 @@ export default function Home() {
       <section className="mt-8 rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-semibold">1. Importez votre relevé CSV</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Le fichier est lu dans votre navigateur. Rien n'est envoyé ni stocké.
+          Le fichier est envoyé à notre serveur pour être analysé, puis n&apos;est ni enregistré ni conservé.
         </p>
         <input type="file" accept=".csv" onChange={handleFile} className="mt-4 block text-sm" />
-        {loading && <p className="mt-4 text-sm text-gray-500">Lecture en cours…</p>}
+        {loading && <p className="mt-4 text-sm text-gray-500">Analyse en cours…</p>}
         {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
       </section>
 
-      {subscriptions && (
+      {summary && (
         <section className="mt-8 rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold">2. Abonnements détectés</h2>
 
@@ -158,13 +181,13 @@ export default function Home() {
             </p>
           </div>
 
-          {cancellable.length === 0 ? (
+          {summary.count === 0 ? (
             <p className="mt-4 text-gray-600">Aucun abonnement à résilier détecté sur cette période.</p>
           ) : !unlocked ? (
             <div className="mt-4 rounded-lg bg-green-50 p-4">
               <p className="text-lg">
-                <span className="font-bold">{cancellable.length}</span> abonnement(s) à résilier détecté(s) :
-                environ <span className="font-bold text-green-700">{total.toFixed(2)} € par an</span>.
+                <span className="font-bold">{summary.count}</span> abonnement(s) à résilier détecté(s) :
+                environ <span className="font-bold text-green-700">{summary.total.toFixed(2)} € par an</span>.
               </p>
               <p className="mt-2 text-sm text-gray-600">
                 Pour voir le détail de chaque abonnement et générer les lettres de résiliation, débloquez l&apos;analyse complète.
@@ -228,7 +251,7 @@ export default function Home() {
                           </button>
                           <p className="mt-2 text-xs text-gray-500">
                             Beaucoup de services proposent désormais la résiliation directement dans leur espace
-                            client : vérifiez-le avant d'envoyer une lettre.
+                            client : vérifiez-le avant d&apos;envoyer une lettre.
                           </p>
                         </div>
                       )}
@@ -237,12 +260,12 @@ export default function Home() {
                 })}
               </ul>
               <p className="mt-6 border-t border-gray-100 pt-4 text-right text-lg">
-                Total à résilier : <span className="font-bold text-green-700">{total.toFixed(2)} € / an</span>
+                Total à résilier : <span className="font-bold text-green-700">{summary.total.toFixed(2)} € / an</span>
               </p>
             </>
           )}
 
-          {transport.length > 0 && (
+          {unlocked && transport.length > 0 && (
             <div className="mt-6 rounded-lg bg-gray-50 p-4">
               <p className="text-sm font-semibold text-gray-700">À garder (transport)</p>
               {transport.map((s) => (
