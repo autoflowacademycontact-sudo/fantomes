@@ -16,14 +16,14 @@ export default function MentionsLegales() {
       <section className="mt-8 space-y-3">
         <h2 className="text-lg font-semibold">Éditeur du site</h2>
         <p>
-          Fantômes est édité par <strong>Mégane M&apos;Sallek</strong>, entrepreneur individuel (micro-entreprise),
-          immatriculée au répertoire SIRENE sous le numéro SIRET [À COMPLÉTER].
+          Fantômes est édité par <strong>Mégane M&apos;Sallek</strong>, entrepreneur individuel (micro-entreprise) exploitée sous le nom commercial AutoFlow Academy,
+          immatriculée au répertoire SIRENE sous le numéro SIRET 899 953 756 00066.
         </p>
         <p>
-          Adresse de domiciliation : [À COMPLÉTER — adresse Legalplace].
+          Adresse de domiciliation : 47 galerie Vivienne, 75002 Paris.
         </p>
         <p>
-          Contact : [À COMPLÉTER — adresse e-mail de contact].
+          Contact : autoflowacademy.contact@gmail.com.
         </p>
         <p>
           Directrice de la publication : Mégane M&apos;Sallek.

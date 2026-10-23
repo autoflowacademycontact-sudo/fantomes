@@ -18,7 +18,7 @@ export default function Cgv() {
         <h2 className="text-lg font-semibold">1. Éditeur et objet</h2>
         <p>
           Les présentes conditions régissent les ventes du service Fantômes, édité par Mégane M&apos;Sallek,
-          entrepreneur individuel (SIRET [À COMPLÉTER]). Fantômes permet d&apos;analyser un relevé bancaire au format
+          entrepreneur individuel (SIRET 899 953 756 00066). Fantômes permet d&apos;analyser un relevé bancaire au format
           CSV afin d&apos;identifier des abonnements récurrents, d&apos;en estimer le coût annuel et de générer des lettres
           de résiliation à compléter et envoyer par l&apos;utilisateur.
         </p>
@@ -66,7 +66,7 @@ export default function Cgv() {
         <h2 className="text-lg font-semibold">6. Remboursement</h2>
         <p>
           Si l&apos;accès au détail ne fonctionne pas après un paiement réussi, contactez-nous à l&apos;adresse
-          [À COMPLÉTER] dans les 14 jours : nous rétablirons l&apos;accès ou procéderons à un remboursement intégral.
+          autoflowacademy.contact@gmail.com dans les 14 jours : nous rétablirons l&apos;accès ou procéderons à un remboursement intégral.
         </p>
       </section>
 

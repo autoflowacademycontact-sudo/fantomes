@@ -16,7 +16,7 @@ export default function Confidentialite() {
       <section className="mt-8 space-y-3">
         <h2 className="text-lg font-semibold">Responsable du traitement</h2>
         <p>
-          Mégane M&apos;Sallek, entrepreneur individuel, adresse de contact : [À COMPLÉTER].
+          Mégane M&apos;Sallek, entrepreneur individuel, adresse de contact : autoflowacademy.contact@gmail.com.
         </p>
       </section>
 
@@ -67,7 +67,7 @@ export default function Confidentialite() {
         <h2 className="text-lg font-semibold">Vos droits</h2>
         <p>
           Vous disposez des droits d&apos;accès, de rectification, d&apos;effacement et d&apos;opposition prévus par le RGPD.
-          Pour les exercer, écrivez à [À COMPLÉTER]. Vous pouvez également saisir la CNIL (cnil.fr).
+          Pour les exercer, écrivez à autoflowacademy.contact@gmail.com. Vous pouvez également saisir la CNIL (cnil.fr).
         </p>
       </section>
     </main>
