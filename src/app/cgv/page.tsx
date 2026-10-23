@@ -12,7 +12,7 @@ export default function Cgv() {
       </Link>
 
       <h1 className="mt-6 font-serif text-3xl font-bold text-blue-800">Conditions générales de vente</h1>
-      <p className="mt-2 text-sm text-gray-500">Version en vigueur au [À COMPLÉTER — date de mise en ligne].</p>
+      <p className="mt-2 text-sm text-gray-500">Version en vigueur au 23 octobre 2026.</p>
 
       <section className="mt-8 space-y-3">
         <h2 className="text-lg font-semibold">1. Éditeur et objet</h2>

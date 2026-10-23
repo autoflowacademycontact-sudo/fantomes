@@ -53,7 +53,7 @@ export default function MentionsLegales() {
         <p>
           Conformément à l&apos;article L.612-1 du Code de la consommation, en cas de litige non résolu avec
           l&apos;éditeur, le consommateur peut recourir gratuitement à un médiateur de la consommation :
-          [À COMPLÉTER — nom et coordonnées du médiateur].
+          CM2C (Centre de Médiation de la Consommation de Conciliateurs de Justice), 49 rue de Ponthieu, 75008 Paris, www.cm2c.net.
         </p>
       </section>
 
