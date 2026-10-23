@@ -15,6 +15,14 @@ export async function POST(request: Request) {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${origin}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/`,
+      // Case à cocher : acceptation des CGV et demande d'exécution immédiate (renonciation à la rétractation)
+      consent_collection: { terms_of_service: "required" },
+      custom_text: {
+        terms_of_service_acceptance: {
+          message:
+            "J'accepte les [conditions générales de vente] et je demande l'exécution immédiate du service. Je reconnais qu'une fois le service exécuté, je ne bénéficierai plus du droit de rétractation.",
+        },
+      },
     });
     return Response.json({ url: session.url });
   } catch {
