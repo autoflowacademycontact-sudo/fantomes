@@ -1,5 +1,5 @@
 import { detectSubscriptions, parseCsv } from "@/lib/detect";
-import { isSessionPaid } from "@/lib/stripe";
+import { isTokenValid } from "@/lib/stripe";
 
 // Abonnements qui ne se résilient pas par lettre (transport)
 const TRANSPORT_LABELS = ["SPL"];
@@ -8,10 +8,10 @@ const TRANSPORT_LABELS = ["SPL"];
 const MAX_CHARS = 2 * 1024 * 1024;
 
 // Analyse le relevé sur le serveur, en mémoire, sans rien enregistrer.
-// Sans paiement vérifié : seulement le nombre et le total.
-// Avec paiement vérifié : en plus, le détail de chaque abonnement.
+// Sans jeton valide : seulement le nombre et le total.
+// Avec jeton valide : en plus, le détail de chaque abonnement.
 export async function POST(request: Request) {
-  let body: { csv?: unknown; sessionId?: unknown };
+  let body: { csv?: unknown; sessionId?: unknown; token?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -35,7 +35,8 @@ export async function POST(request: Request) {
   const total = Math.round(cancellable.reduce((sum, s) => sum + s.annualCost, 0) * 100) / 100;
 
   const sessionId = typeof body.sessionId === "string" ? body.sessionId : "";
-  const paid = sessionId ? await isSessionPaid(sessionId) : false;
+  const token = typeof body.token === "string" ? body.token : "";
+  const paid = sessionId && token ? await isTokenValid(sessionId, token) : false;
 
   return Response.json({
     paid,

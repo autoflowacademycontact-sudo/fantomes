@@ -5,8 +5,8 @@ import type { ChangeEvent } from "react";
 import type { Subscription } from "@/lib/detect";
 import { addressLooksComplete, buildCancellationLetter } from "@/lib/letters";
 
-// Identifiant de la session de paiement, gardé dans ce navigateur uniquement
-const PAYMENT_STORAGE_KEY = "fantomes_session_id";
+// Accès au détail (identifiant de session + jeton), gardé dans ce navigateur uniquement
+const PAYMENT_STORAGE_KEY = "fantomes_access";
 
 // Noms affichés pour les libellés détectés (clé = libellé normalisé en majuscules)
 const DISPLAY_NAMES: Record<string, string> = {
@@ -46,18 +46,31 @@ export default function Home() {
   const transport = details?.filter((s) => TRANSPORT_LABELS.includes(s.label)) ?? [];
   const cancellable = details?.filter((s) => !TRANSPORT_LABELS.includes(s.label)) ?? [];
 
-  // Au retour de Stripe, on mémorise la session (le serveur vérifiera le paiement)
+  // Au retour de Stripe : le serveur attribue un jeton, une seule fois par paiement
   useEffect(() => {
     const url = new URL(window.location.href);
     const fromStripe = url.searchParams.get("session_id");
-    if (fromStripe) {
-      try {
-        localStorage.setItem(PAYMENT_STORAGE_KEY, fromStripe);
-      } catch {
-        // stockage indisponible : le détail restera masqué
-      }
-      window.history.replaceState({}, "", url.pathname);
-    }
+    if (!fromStripe) return;
+    window.history.replaceState({}, "", url.pathname);
+
+    fetch("/api/claim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: fromStripe }),
+    })
+      .then(async (res) => {
+        const data = (await res.json()) as { token?: string; error?: string };
+        if (!res.ok || !data.token) {
+          setError(data.error ?? "Ce paiement est invalide ou a déjà été utilisé.");
+          return;
+        }
+        try {
+          localStorage.setItem(PAYMENT_STORAGE_KEY, JSON.stringify({ sessionId: fromStripe, token: data.token }));
+        } catch {
+          setError("Votre navigateur bloque le stockage : le détail ne pourra pas s'afficher.");
+        }
+      })
+      .catch(() => setError("Impossible de valider le paiement. Réessayez."));
   }, []);
 
   async function startCheckout() {
@@ -86,16 +99,22 @@ export default function Home() {
     try {
       const csv = await file.text();
       let sessionId = "";
+      let token = "";
       try {
-        sessionId = localStorage.getItem(PAYMENT_STORAGE_KEY) ?? "";
+        const raw = localStorage.getItem(PAYMENT_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw) as { sessionId?: string; token?: string };
+          sessionId = parsed.sessionId ?? "";
+          token = parsed.token ?? "";
+        }
       } catch {
-        sessionId = "";
+        // accès illisible : le détail restera masqué
       }
 
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ csv, sessionId }),
+        body: JSON.stringify({ csv, sessionId, token }),
       });
       const data = (await res.json()) as AnalyzeResponse;
       if (!res.ok) throw new Error(data.error ?? "Analyse impossible.");
