@@ -6,22 +6,29 @@ export const metadata = {
 
 export default function Confidentialite() {
   return (
-    <main className="mx-auto max-w-2xl px-4 py-12 text-gray-800">
-      <Link href="/" className="text-sm text-blue-800 hover:underline">
+    <>
+      <header className="bg-gradient-to-r from-slate-950 via-indigo-950 to-violet-900 text-white">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+          <Link href="/" className="font-serif text-xl font-bold">Fantômes</Link>
+          <span className="text-xs text-violet-200">par AutoFlow Academy</span>
+        </div>
+      </header>
+      <main className="mx-auto min-h-screen max-w-3xl bg-slate-50 px-4 py-12 text-slate-800">
+      <Link href="/" className="text-sm text-violet-800 hover:underline">
         ← Retour à Fantômes
       </Link>
 
-      <h1 className="mt-6 font-serif text-3xl font-bold text-blue-800">Politique de confidentialité</h1>
+      <h1 className="mt-6 font-serif text-3xl font-bold text-violet-800">Politique de confidentialité</h1>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Responsable du traitement</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Responsable du traitement</h2>
         <p>
           Mégane M&apos;Sallek, entrepreneur individuel, adresse de contact : autoflowacademy.contact@gmail.com.
         </p>
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Votre relevé bancaire</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Votre relevé bancaire</h2>
         <p>
           Le fichier CSV que vous importez est envoyé à notre serveur uniquement pour être analysé. Il est traité en
           mémoire et n&apos;est ni enregistré, ni conservé, ni transmis à un tiers. Une fois l&apos;analyse terminée, il
@@ -30,7 +37,7 @@ export default function Confidentialite() {
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Vos informations pour les lettres</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Vos informations pour les lettres</h2>
         <p>
           Votre nom, votre adresse et votre numéro de client servent uniquement à remplir la lettre dans votre
           navigateur. Ils ne sont ni envoyés à notre serveur, ni enregistrés.
@@ -38,7 +45,7 @@ export default function Confidentialite() {
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Paiement</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Paiement</h2>
         <p>
           Lors du paiement, Stripe traite vos données de carte et votre adresse e-mail. Fantômes reçoit de Stripe
           uniquement la confirmation du paiement. Nous conservons, côté Stripe, une empreinte chiffrée du code
@@ -47,7 +54,7 @@ export default function Confidentialite() {
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Stockage dans votre navigateur</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Stockage dans votre navigateur</h2>
         <p>
           Après paiement, un code d&apos;accès est stocké dans le stockage local de votre navigateur. Il ne contient
           aucune donnée bancaire et ne sert à aucun suivi publicitaire. Vous pouvez le supprimer à tout moment depuis
@@ -56,7 +63,7 @@ export default function Confidentialite() {
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Hébergement</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Hébergement</h2>
         <p>
           Le site est hébergé par Vercel Inc. (États-Unis), qui peut traiter des données techniques de connexion
           (adresse IP, journaux de requêtes) pour assurer le fonctionnement du service.
@@ -64,12 +71,13 @@ export default function Confidentialite() {
       </section>
 
       <section className="mt-8 space-y-3">
-        <h2 className="text-lg font-semibold">Vos droits</h2>
+        <h2 className="text-lg font-semibold text-indigo-900">Vos droits</h2>
         <p>
           Vous disposez des droits d&apos;accès, de rectification, d&apos;effacement et d&apos;opposition prévus par le RGPD.
           Pour les exercer, écrivez à autoflowacademy.contact@gmail.com. Vous pouvez également saisir la CNIL (cnil.fr).
         </p>
       </section>
-    </main>
+      </main>
+    </>
   );
 }
