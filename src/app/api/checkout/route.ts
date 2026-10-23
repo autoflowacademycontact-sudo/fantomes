@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       custom_text: {
         terms_of_service_acceptance: {
           message:
-            "J'accepte les [conditions générales de vente](https://fantomes-five-xi.vercel.app/cgv) et je demande l'exécution immédiate du service. Je reconnais qu'une fois le service exécuté, je ne bénéficierai plus du droit de rétractation.",
+            "J'accepte les [conditions générales de vente](https://fantomes-five-xi.vercel.app/cgv) et je demande l'exécution immédiate du service. Je renonce à mon droit de rétractation une fois le service exécuté.",
         },
       },
     });
