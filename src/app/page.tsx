@@ -159,7 +159,7 @@ export default function Home() {
           Combien vous coûtent vos abonnements inutilisés ?
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg text-violet-200">
-          Analyse gratuite de votre relevé bancaire. Pour 19&nbsp;€, on prépare vos lettres de résiliation.
+          Analyse gratuite de votre relevé bancaire. Pour 19&nbsp;€, on prépare vos lettres de&nbsp;résiliation.
         </p>
         <a
           href="#analyse"
