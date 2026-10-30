@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fantômes : débusquez vos abonnements oubliés",
+  title: "Fantômes : abonnements oubliés, à partir de 19 €",
   description:
     "Importez votre relevé bancaire et voyez combien vos abonnements inutilisés vous coûtent par an. Relevé supprimé après analyse.",
   openGraph: {

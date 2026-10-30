@@ -159,8 +159,7 @@ export default function Home() {
           Débusquez les abonnements que vous payez sans les utiliser
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg text-violet-200">
-          Importez votre relevé bancaire : en quelques secondes, vous voyez combien vos abonnements oubliés vous
-          coûtent chaque année.
+          Analyse gratuite de votre relevé bancaire. Le détail et vos lettres de résiliation : 19 €.
         </p>
         <a
           href="#analyse"
