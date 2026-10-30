@@ -156,7 +156,7 @@ export default function Home() {
       {/* Accroche */}
       <section className="bg-gradient-to-br from-slate-950 via-indigo-950 to-violet-900 px-4 pb-24 pt-12 text-center text-white">
         <h1 className="mx-auto max-w-3xl font-serif text-4xl font-bold leading-tight sm:text-5xl">
-          Vous payez peut-être des abonnements que vous n'utilisez plus. Combien vous coûtent-ils ?
+          Combien vous coûtent vos abonnements inutilisés ?
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg text-violet-200">
           Analyse gratuite de votre relevé bancaire. Pour 19&nbsp;€, on prépare vos lettres de résiliation.
