@@ -167,7 +167,7 @@ export default function Home() {
         >
           Analyser mon relevé
         </a>
-        <p className="mx-auto mt-6 max-w-2xl text-sm text-violet-200">
+        <p className="mx-auto mt-6 max-w-2xl text-lg font-semibold text-violet-100">
           Pour 19&nbsp;€, on prépare vos lettres de&nbsp;résiliation.
         </p>
       </section>
