@@ -159,7 +159,7 @@ export default function Home() {
           Combien vous coûtent vos abonnements inutilisés ?
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-lg text-violet-200">
-          Analyse gratuite de votre relevé bancaire. Pour 19&nbsp;€, on prépare vos lettres de&nbsp;résiliation.
+          Analyse gratuite de votre relevé bancaire.
         </p>
         <a
           href="#analyse"
@@ -167,6 +167,9 @@ export default function Home() {
         >
           Analyser mon relevé
         </a>
+        <p className="mx-auto mt-6 max-w-2xl text-sm text-violet-200">
+          Pour 19&nbsp;€, on prépare vos lettres de&nbsp;résiliation.
+        </p>
       </section>
 
       {/* Comment ça marche */}
