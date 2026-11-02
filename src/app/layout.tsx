@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   description:
     "Importez votre relevé bancaire et voyez combien vos abonnements inutilisés vous coûtent par an. Relevé supprimé après analyse.",
   openGraph: {
-    title: "Fantômes : débusquez vos abonnements oubliés",
+    title: "Fantômes : combien vous coûtent vos abonnements inutilisés ?",
     description:
-      "Importez votre relevé bancaire et découvrez combien vos abonnements oubliés vous coûtent chaque année. Le relevé est analysé puis supprimé, jamais conservé.",
+      "Analyse gratuite de votre relevé bancaire. Pour 19 €, on prépare vos lettres de résiliation. Relevé supprimé après analyse.",
     url: "https://fantomes-five-xi.vercel.app/",
     siteName: "Fantômes",
     locale: "fr_FR",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Fantômes : débusquez vos abonnements oubliés",
+        alt: "Fantômes : combien vous coûtent vos abonnements inutilisés ?",
       },
     ],
   },
